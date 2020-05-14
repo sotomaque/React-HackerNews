@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import useFormValidation from "./useFormValidation";
 import validateLogin from './validateLogin';
 
@@ -24,7 +25,8 @@ function Login(props) {
     try {
       login 
       ? await firebase.login(email, password)
-      : await firebase.register(name, email, password)
+      : await firebase.register(name, email, password);
+      props.history.push('/');
     } catch (err) {
       console.error('Authentication Error', err)
       setFirebaseError(err.message)
@@ -91,6 +93,9 @@ function Login(props) {
           </button>
         </div>
       </form>
+      <div className='forgot-password'>
+        <Link to='/forgot'>Forgot Password?</Link>
+      </div>
     </div>
   );
 }

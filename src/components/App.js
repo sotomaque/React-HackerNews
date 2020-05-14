@@ -1,6 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
+import useAuth from './Auth/useAuth';
+import firebase, { FirebaseContext } from '../firebase';
+
 import CreateLink from './Link/CreateLink';
 import Login from './Auth/Login';
 import ForgotPassword from './Auth/ForgotPassword';
@@ -11,26 +14,31 @@ import LinkDetail from './Link/LinkDetail';
 import Header from './Header';
 
 function App() {
+  const user = useAuth();
+
   return (
     <Router>
-      <div className="app-container">
-        <Header />
-        <div className='route-container'>
-        <Switch>
-  
-          <Route exact path='/' render={() => <Redirect to='/new/1' />} />
-          <Route path='/create' component={CreateLink} />
-          <Route path='/login' component={Login} />
-          <Route path='/forgot' component={ForgotPassword} />
-          <Route path='/search' component={SearchLinks} />
-          <Route path='/top' component={LinkList} />
-          <Route path='/new/:page' component={LinkList} />
-          <Route path='/link/:linkId' component={LinkDetail} />
+      <FirebaseContext.Provider  value={{ user, firebase }}>
+     
+        <div className="app-container">
+          <Header />
+          <div className='route-container'>
+          <Switch>
+    
+            <Route exact path='/' render={() => <Redirect to='/new/1' />} />
+            <Route path='/create' component={CreateLink} />
+            <Route path='/login' component={Login} />
+            <Route path='/forgot' component={ForgotPassword} />
+            <Route path='/search' component={SearchLinks} />
+            <Route path='/top' component={LinkList} />
+            <Route path='/new/:page' component={LinkList} />
+            <Route path='/link/:linkId' component={LinkDetail} />
+            
+          </Switch>
           
-        </Switch>
-        
+          </div>
         </div>
-      </div>
+      </FirebaseContext.Provider>
     </Router>
   );
 }
