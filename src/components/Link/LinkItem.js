@@ -55,7 +55,6 @@ function LinkItem({ link, index, showCount }) {
             // get previouse votes obj
             const prevVotes = doc.data().votes;
             // delete our previous vote
-
             const prevVotesMinusOurUpVote = prevVotes.filter( vote => {
               return vote.votedBy.id !== user.uid
             });
