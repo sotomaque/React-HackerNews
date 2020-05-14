@@ -17,7 +17,7 @@ function LinkItem({ link, index, showCount }) {
     }
   }, [])
 
-  function handleVote() {
+  function handleUpVote() {
     if (!user) {
       history.push('/login')
     } else if (!voted) {
@@ -29,14 +29,42 @@ function LinkItem({ link, index, showCount }) {
           // check if it exists
           if (doc.exists) {
             // update property
-            const prevVotees = doc.data().votes;
+            const prevVotes = doc.data().votes;
             const vote = { votedBy: { id: user.uid, name: user.displayName } }
-            const updatedVotes = [...prevVotees, vote]
+            const updatedVotes = [...prevVotes, vote]
             // update value
             voteRef.update({ votes: updatedVotes })
           }
         });
       setVoted(true);
+    }
+  }
+
+  function handleDownVote() {
+    if (!user) {
+      history.push('/login')
+    } else {
+      // get a reference to document
+      console.log('here')
+      const voteRef = firebase.db.collection('links').doc(link.id);
+      // get document
+      voteRef.get()
+        .then(doc => {
+          // check if it exists
+          if (doc.exists) {
+            // get previouse votes obj
+            const prevVotes = doc.data().votes;
+            // delete our previous vote
+
+            const prevVotesMinusOurUpVote = prevVotes.filter( vote => {
+              return vote.votedBy.id !== user.uid
+            });
+            const updatedVotes = [...prevVotesMinusOurUpVote]
+            // update value
+            voteRef.update({ votes: updatedVotes })
+          }
+        });
+      setVoted(false);
     }
   }
 
@@ -65,9 +93,15 @@ function LinkItem({ link, index, showCount }) {
   return <div className='flex items-start mt2'>
     <div className='flex items-center'>
       {
-        showCount && <span className='grey'>{index}</span>
+        showCount && <span className='grey'>{index}.</span>
       }     
-      <button className='vote-button' onClick={handleVote} disable={voted.toString()}>▲</button>
+      {
+        !voted && <div className='vote-button' onClick={handleUpVote}>▲</div>
+      }
+      {
+        voted && <div className='vote-button' onClick={handleDownVote}>▼</div>
+      }
+
     </div>
     <div className='ml1'>
       <div>

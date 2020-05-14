@@ -6,13 +6,14 @@ function LinkList(props) {
 
   const { firebase } = React.useContext(FirebaseContext);
   const [links, setLinks] = React.useState([]);
+  const isNewPage = props.location.pathname.includes('new');
 
   React.useEffect(() => {
     getLinks()
   }, [])
 
   function getLinks() {
-    firebase.db.collection('links').onSnapshot(handleSnapshot)
+    firebase.db.collection('links').orderBy('created', 'desc').onSnapshot(handleSnapshot)
   }
 
   function handleSnapshot(snapshot) {
@@ -22,10 +23,21 @@ function LinkList(props) {
     setLinks(links);
   }
 
+  function renderLinks() {
+    if (isNewPage) {
+      return links;
+    } else {
+      // sort array by elements votes length is descending order
+      // call slice first to not mutate original array
+      const topLinks = links.slice().sort(( link1, link2 ) => link2.votes.length - link1.votes.length);
+      return topLinks;
+    }
+  }
+
   return (
     <div>
       {
-        links.map((link, index) => (
+        renderLinks().map((link, index) => (
           <LinkItem
             key={link.id}
             showCount={true}
