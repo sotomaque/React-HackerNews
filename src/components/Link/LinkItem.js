@@ -30,10 +30,11 @@ function LinkItem({ link, index, showCount }) {
           if (doc.exists) {
             // update property
             const prevVotes = doc.data().votes;
-            const vote = { votedBy: { id: user.uid, name: user.displayName } }
-            const updatedVotes = [...prevVotes, vote]
+            const vote = { votedBy: { id: user.uid, name: user.displayName } };
+            const updatedVotes = [...prevVotes, vote];
+            const voteCount = updatedVotes.length;
             // update value
-            voteRef.update({ votes: updatedVotes })
+            voteRef.update({ votes: updatedVotes, voteCount });
           }
         });
       setVoted(true);
@@ -58,9 +59,10 @@ function LinkItem({ link, index, showCount }) {
             const prevVotesMinusOurUpVote = prevVotes.filter( vote => {
               return vote.votedBy.id !== user.uid
             });
-            const updatedVotes = [...prevVotesMinusOurUpVote]
+            const updatedVotes = [...prevVotesMinusOurUpVote];
+            const voteCount = updatedVotes.length;
             // update value
-            voteRef.update({ votes: updatedVotes })
+            voteRef.update({ votes: updatedVotes, voteCount });
           }
         });
       setVoted(false);
@@ -104,10 +106,11 @@ function LinkItem({ link, index, showCount }) {
     </div>
     <div className='ml1'>
       <div>
-        {link.description} <span className='link'>({getDomain(link.url)})</span>
+        <a href={link.url} className='black no-underline' target='__blank'>{link.description}</a> <span className='link'>({getDomain(link.url)})</span>
       </div>
+  
       <div className='f6 lh-copy gray'>
-        {link.votes.length} votes by {link.postedBy.name} {distanceInWordsToNow(link.created)} ago
+        {link.voteCount === 1 ? `${link.voteCount} vote` : `${link.voteCount} votes`} by {link.postedBy.name} {distanceInWordsToNow(link.created)} ago
         {" | "}
         <Link to={`/link/${link.id}`}>
           {link.comments.length > 0 ? `${link.comments.length} comments` : "discuss"}

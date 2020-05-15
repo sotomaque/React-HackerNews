@@ -12,7 +12,7 @@ function Header() {
         <img src='/logo.png' alt='logo' className='logo' />
         <div className='divider'>|</div>
         <Link to='/' className='header-title'>
-          Hooks News
+          Enrique's News
         </Link>
         <div className='divider'>|</div>
         <Link to='/' className='header-title'>
