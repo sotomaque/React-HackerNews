@@ -16,6 +16,7 @@ function LinkList(props) {
   page = Number(page);
   const history = useHistory();
   const [cursor, setCursor] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
 
   console.log('page: ', page, 'type ', typeof(page))
 
@@ -26,6 +27,7 @@ function LinkList(props) {
   }, [isTopPage, page]);
 
   function getLinks() {
+    setLoading(true)
     const hasCursor = Boolean(cursor)
     // top page query
     if (isTopPage) {
@@ -62,6 +64,7 @@ function LinkList(props) {
             setLinks(links);
             setCursor(lastLink);
           })
+        setLoading(false)
         // return something so use effect doesnt complain on cleanup
         return () => {}
       }
@@ -75,6 +78,7 @@ function LinkList(props) {
     setLinks(links);
     const lastLink = links[links.length - 1];
     setCursor(lastLink);
+    setLoading(false)
   }
 
   function visitPreviousPage() {
@@ -92,7 +96,7 @@ function LinkList(props) {
   const pageIndex = page ? (page - 1) * LINKS_PER_PAGE + 1 : 0;
 
   return (
-    <div>
+    <div style={{opacity: loading ? 0.25 : 1}}>
       {
         links.map((link, index) => (
           <LinkItem
